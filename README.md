@@ -1,8 +1,7 @@
 # AI2-code
 机器翻译：
-1. [Seq2Seq 机器翻译, 全程手写代码](https://www.bilibili.com/video/BV1hf4y1u7ez?p=2&vd_source=14b5aa0f75150f92a422f3d1987176ce)（视频）
+1. (无用，可忽略)[Seq2Seq 机器翻译, 全程手写代码](https://www.bilibili.com/video/BV1hf4y1u7ez?p=2&vd_source=14b5aa0f75150f92a422f3d1987176ce)（视频）  
 对应源码：[https://github.com/shouxieai/seq2seq_translation](https://github.com/shouxieai/seq2seq_translation)
-(无用，可忽略)
 <hr>
 
 编码策略：
