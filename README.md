@@ -19,3 +19,4 @@ pytorch部分函数讲解：
 1. [torch.argmax函数说明](https://blog.csdn.net/weixin_42494287/article/details/92797061)
 2. [torch.multinomial()理解](https://blog.csdn.net/monchin/article/details/79787621)
 3. [torch.topk与torch.sort用法](https://blog.csdn.net/weixin_43818631/article/details/121771760)
+4. [剖析 | torch.cumsum维度详解](https://blog.csdn.net/songxiaolingbaobao/article/details/114580364)
