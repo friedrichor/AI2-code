@@ -20,5 +20,6 @@ pytorch部分函数讲解：
 2. [torch.multinomial()理解](https://blog.csdn.net/monchin/article/details/79787621)
 3. [torch.topk与torch.sort用法](https://blog.csdn.net/weixin_43818631/article/details/121771760)
 4. [剖析 | torch.cumsum维度详解](https://blog.csdn.net/songxiaolingbaobao/article/details/114580364)
-5. [Python numpy pytorch 中的数据复制 copy deepcopy clone detach](https://blog.csdn.net/qq_40728667/article/details/122161029)
-6. [【python基础】PyTorch中clone()、detach()](https://blog.csdn.net/dujuancao11/article/details/121563226)
+5. [torch.cumsum() 和 torch.cumprod()](https://blog.csdn.net/qq_30122359/article/details/102955570)(累加和累乘)
+6. [Python numpy pytorch 中的数据复制 copy deepcopy clone detach](https://blog.csdn.net/qq_40728667/article/details/122161029)
+7. [【python基础】PyTorch中clone()、detach()](https://blog.csdn.net/dujuancao11/article/details/121563226)
