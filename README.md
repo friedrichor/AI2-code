@@ -25,3 +25,8 @@ pytorch部分函数讲解：
 7. [Python numpy pytorch 中的数据复制 copy deepcopy clone detach](https://blog.csdn.net/qq_40728667/article/details/122161029)
 8. [【python基础】PyTorch中clone()、detach()](https://blog.csdn.net/dujuancao11/article/details/121563226)
 9. [YDOOK：Pytorch教程：tensor 张量内各个值同时相加一个数](https://blog.csdn.net/weixin_42255190/article/details/121598429)
+
+<hr>
+
+BERT:
+1. [一文读懂BERT(原理篇)](https://blog.csdn.net/jiaowoshouzi/article/details/89073944)
