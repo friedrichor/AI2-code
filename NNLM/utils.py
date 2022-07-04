@@ -1,5 +1,13 @@
-from my_dataset import MyDataSet
+import sys
+import json
+from tqdm import tqdm
+import math
 
+import torch
+from torch import nn
+
+from my_dataset import MyDataSet
+from params import *
 
 def generate_vocab(data_path):
     word_list = []
@@ -12,12 +20,16 @@ def generate_vocab(data_path):
 
     # 生成字典
     word2index_dict = {w: i + 2 for i, w in enumerate(word_list)}
-    index2word_dict = {i + 2: w for i, w in enumerate(word_list)}
-
     word2index_dict['<PAD>'] = 0
     word2index_dict['<UNK>'] = 1
-    index2word_dict[0] = '<PAD>'
-    index2word_dict[1] = '<UNK>'
+    word2index_dict = dict(sorted(word2index_dict.items(), key=lambda x: x[1]))  # 排序
+
+    index2word_dict = {index: word for word, index in word2index_dict.items()}
+
+    # 将单词表写入json
+    json_str = json.dumps(word2index_dict, indent=4)
+    with open(vocab_path, 'w') as json_file:
+        json_file.write(json_str)
 
     return word2index_dict, index2word_dict
 
@@ -29,6 +41,12 @@ def generate_dataset(data_path, word2index_dict, n_step=5):
     :param n_step: 窗口大小
     :return: 实例化后的数据集
     """
+    def word2index(word):
+        try:
+            return word2index_dict[word]
+        except:
+            return 1  # <UNK>
+
     input_list = []
     target_list = []
 
@@ -38,13 +56,13 @@ def generate_dataset(data_path, word2index_dict, n_step=5):
         word_list = sentence.split()
         if len(word_list) < n_step + 1:  # 句子中单词不足，padding
             word_list = ['<PAD>'] * (n_step + 1 - len(word_list)) + word_list
-        index_list = [word2index_dict[word] for word in word_list]
+        index_list = [word2index(word) for word in word_list]
         for i in range(len(word_list) - n_step):
             input = index_list[i: i + n_step]
             target = index_list[i + n_step]
 
-            input_list.append(input)
-            target_list.append(target)
+            input_list.append(torch.tensor(input))
+            target_list.append(torch.tensor(target))
 
     # 实例化数据集
     dataset = MyDataSet(input_list, target_list)
@@ -52,9 +70,8 @@ def generate_dataset(data_path, word2index_dict, n_step=5):
     return dataset
 
 
-def train_one_epoch(model, criterion, optimizer, data_loader, device, epoch, lr_scheduler):
+def train_one_epoch(model, loss_function, optimizer, data_loader, device, epoch, lr_scheduler):
     model.train()
-    loss_function = criterion
     accu_loss = torch.zeros(1).to(device)  # 累计损失
     optimizer.zero_grad()
 
@@ -86,6 +103,29 @@ def train_one_epoch(model, criterion, optimizer, data_loader, device, epoch, lr_
     return accu_loss.item() / (step + 1)
 
 
+def evaluate(model, loss_function, data_loader, device, epoch):
+    model.eval()
+
+    accu_loss = torch.zeros(1).to(device)  # 累计损失
+
+    data_loader = tqdm(data_loader, file=sys.stdout)
+    for step, data in enumerate(data_loader):
+        input, target = data
+
+        pred = model(input.to(device))
+
+        loss = loss_function(pred, target.to(device))
+        accu_loss += loss
+
+        data_loader.desc = "[valid epoch {}] loss: {:.3f}".format(
+            epoch,
+            accu_loss.item() / (step + 1),
+        )
+
+    return accu_loss.item() / (step + 1)
+
+
+# 调度器，Poly策略
 def create_lr_scheduler(optimizer,
                         num_step: int,
                         epochs: int,
