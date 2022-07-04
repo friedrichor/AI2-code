@@ -26,6 +26,7 @@ pytorch部分函数讲解：
 8. [【python基础】PyTorch中clone()、detach()](https://blog.csdn.net/dujuancao11/article/details/121563226)
 9. [YDOOK：Pytorch教程：tensor 张量内各个值同时相加一个数](https://blog.csdn.net/weixin_42255190/article/details/121598429)
 10. [python中view()函数怎么用？](https://blog.csdn.net/qq_26400705/article/details/109816853)(pytorch相当于reshape的操作)
+11. [PyTorch学习系列(一)——加载数据并生成batch数据](https://blog.csdn.net/VictoriaW/article/details/72356453)
 
 <hr>
 
