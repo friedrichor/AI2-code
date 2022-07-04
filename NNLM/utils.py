@@ -7,7 +7,7 @@ def generate_vocab(data_path):
     f = open(data_path, 'r')
     lines = f.readlines()
     for sentence in lines:
-        word_list = sentence.split()
+        word_list += sentence.split()
     word_list = list(set(word_list))
 
     # 生成字典
@@ -36,9 +36,9 @@ def generate_dataset(data_path, word2index_dict, n_step=5):
     lines = f.readlines()
     for sentence in lines:
         word_list = sentence.split()
-        index_list = [word2index_dict[word] for word in word_list]
         if len(word_list) < n_step + 1:  # 句子中单词不足，padding
-            word_list = ['<pad>'] * (n_step + 1 - len(word_list)) + word_list
+            word_list = ['<PAD>'] * (n_step + 1 - len(word_list)) + word_list
+        index_list = [word2index_dict[word] for word in word_list]
         for i in range(len(word_list) - n_step):
             input = index_list[i: i + n_step]
             target = index_list[i + n_step]
