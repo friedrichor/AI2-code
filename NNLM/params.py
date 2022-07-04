@@ -16,6 +16,6 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 # 数据集路径
-train_path = ''
-val_path = ''
-test_path = ''
+train_path = 'data/train.txt'
+val_path = 'data/valid.txt'
+test_path = 'data/test.txt'
