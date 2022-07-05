@@ -27,6 +27,7 @@ pytorch部分函数讲解：
 9. [YDOOK：Pytorch教程：tensor 张量内各个值同时相加一个数](https://blog.csdn.net/weixin_42255190/article/details/121598429)
 10. [python中view()函数怎么用？](https://blog.csdn.net/qq_26400705/article/details/109816853)(pytorch相当于reshape的操作)
 11. [PyTorch学习系列(一)——加载数据并生成batch数据](https://blog.csdn.net/VictoriaW/article/details/72356453)
+12. [Pytorch：模型的保存与加载 torch.save()、torch.load()、torch.nn.Module.load_state_dict()](https://blog.csdn.net/weixin_40522801/article/details/106563354)
 
 <hr>
 
