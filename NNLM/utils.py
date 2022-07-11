@@ -85,9 +85,10 @@ def train_one_epoch(model, loss_function, optimizer, data_loader, device, epoch,
         loss.backward()
         accu_loss += loss.detach()
 
-        data_loader.desc = "[train epoch {}] loss: {:.3f}, lr: {:.5f}".format(
+        data_loader.desc = "[train epoch {}] loss: {:.3f}, ppl: {:.3f}, lr: {:.5f}".format(
             epoch,
             accu_loss.item() / (step + 1),
+            math.exp(accu_loss.item() / (step + 1)),
             optimizer.param_groups[0]["lr"]
         )
 
@@ -98,9 +99,10 @@ def train_one_epoch(model, loss_function, optimizer, data_loader, device, epoch,
         optimizer.step()
         optimizer.zero_grad()
         # update lr
-        lr_scheduler.step()
+        if lr_scheduler != None:
+            lr_scheduler.step()
 
-    return accu_loss.item() / (step + 1)
+    return accu_loss.item() / (step + 1), math.exp(accu_loss.item() / (step + 1))
 
 
 def evaluate(model, loss_function, data_loader, device, epoch):
@@ -117,12 +119,13 @@ def evaluate(model, loss_function, data_loader, device, epoch):
         loss = loss_function(pred, target.to(device))
         accu_loss += loss
 
-        data_loader.desc = "[valid epoch {}] loss: {:.3f}".format(
+        data_loader.desc = "[valid epoch {}] loss: {:.3f}, ppl: {:.3f}".format(
             epoch,
             accu_loss.item() / (step + 1),
+            math.exp(accu_loss.item() / (step + 1)),
         )
 
-    return accu_loss.item() / (step + 1)
+    return accu_loss.item() / (step + 1), math.exp(accu_loss.item() / (step + 1))
 
 
 # 调度器，Poly策略
