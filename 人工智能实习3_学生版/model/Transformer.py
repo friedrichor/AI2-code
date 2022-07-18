@@ -50,7 +50,7 @@ class Transformer(nn.Module):
         mask = pad_attn_mask.bool()
         return mask
 
-    def forward(self, enc_input, dec_input,enc_output=None):
+    def forward(self, enc_input, dec_input, enc_output=None):
         device = self.device
 
         # 编码器只需要进行padding mask，每个batch都不一样
@@ -71,7 +71,7 @@ class Transformer(nn.Module):
         output = self.final(dec_output)
         result = output.view(-1, output.size(-1))  # result: [batch_size x tgt_len, tgt_vocab_size]
 
-        return enc_output,result
+        return enc_output, result
 
 
 class Encoder(nn.Module):

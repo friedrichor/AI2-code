@@ -28,9 +28,11 @@ if __name__ == '__main__':
 
     enc_vocab2id = {word: i for i, word in enumerate(encoder_chars)}
     enc_id2vocab = {i: word for i, word in enumerate(encoder_chars)}
+    print(enc_id2vocab)
 
     dec_vocab2id = {word: i for i, word in enumerate(decoder_chars)}
     dec_id2vocab = {i: word for i, word in enumerate(decoder_chars)}
+    # print(dec_vocab2id['now'])
 
     # print('-----------------')
     # print(enc_vocab2id[char_space])
@@ -52,6 +54,8 @@ if __name__ == '__main__':
         test_lines = open(test_file_path, 'r', encoding='utf-8').readlines()
         test_size = len(test_lines)
         for i in range(test_size):
+            # if i == 4:
+            #     break
             line = test_lines[i]
             enc_input = line.split('\t')[0]
             true_output = line.split('\t')[1].strip()
@@ -68,13 +72,13 @@ if __name__ == '__main__':
             enc_input = char_start + char_space + enc_input + char_space + char_end
 
             if decode_method=="sampling":
-                decode_score, decode_result = sampling(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id,enc_input)
+                decode_score, decode_result = sampling(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id, enc_input)
             elif decode_method=="greedy":
                 decode_score, decode_result = greedySearch(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id, enc_input)
             elif decode_method=="topK":
                 decode_score, decode_result = topKSampling(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id, enc_input,5)
-            elif decode_method == "topK":
-                decode_score, decode_result = topPSampling(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id,enc_input, 0.8)
+            elif decode_method == "topP":
+                decode_score, decode_result = topPSampling(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id,enc_input, 0.1)  # 0.8
             elif decode_method=="beam":
                 decode_score, decode_result = beamSearch(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id,
                                                            enc_input, 5)
@@ -84,6 +88,8 @@ if __name__ == '__main__':
 
 
             # 将下标转化成句子
+            # print(decode_result)
+            # print('dec_id2vocab =', dec_id2vocab)
             sent = ''
             for w in decode_result:
                 sent += dec_id2vocab[w] + ' '
@@ -93,6 +99,9 @@ if __name__ == '__main__':
             sent = sent.replace(word_end, " ")
             sent = sent.replace(char_start, "")
             sent = sent.replace(char_end, "")
+            # print([target_sentence.split(char_space)])
+            # print(sent.split(char_space))
+            # exit()
 
             # 计算该条解码句子的bleu得分
             bleu_score_1 += sentence_bleu([target_sentence.split(char_space)], sent.split(char_space),
@@ -105,6 +114,7 @@ if __name__ == '__main__':
                                           weights=(0, 0, 0, 1))
 
             writeGenerateToFile('解码结果：log概率({:.3f})\t{}\n'.format(decode_score, sent))
+
 
         # 计算所有句子的平均bleu得分
         bleu_score_1 = bleu_score_1 / test_size

@@ -8,6 +8,7 @@ random.seed(0)
 
 
 # 利用BEP得到的结果进行单词划分，贪心算法
+# 利用BEP得到的结果进行单词划分，贪心算法
 def bpe_convert(bpe, word):
     # print(word+"----",end='')
     word = word + word_end

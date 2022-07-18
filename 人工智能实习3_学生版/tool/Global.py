@@ -1,15 +1,17 @@
 # *_*coding:utf-8 *_*
 
+# root="/content/drive/MyDrive/trans/" # 项目路径
 root="E:/pythonProjects/course_AIpractice2/人工智能实习3_学生版/" # 项目路径
+weights_path = "checkpoints-ori/"  # 模型保存路径
 #root="/headless/Desktop/人工智能实习3/" # 项目路径
 
-max_tokens = 16000  # 每个batch所包含的单词数量,根据显卡显存调整(12G:8000,24G:16000)
+max_tokens = 8000  # 每个batch所包含的单词数量,根据显卡显存调整(12G:8000,24G:16000)
 epochs = 20  # 训练迭代轮次。
 init_model_number=0 # 0表示从头训练；>=1时，表示载入chekpoint，继续训练
 pre_batch_num_per_epoch=570 # 继续训练时，需配置该参数，570为之前训练时，一个epoch所包含的batch的数量
 
 #解码策略：sampling、beam、greedy、topK、topP
-decode_method="sampling"
+decode_method="beam"
 
 # 是否使用GPU
 use_gpu = True
@@ -18,9 +20,9 @@ use_gpu = True
 # encoder和decoder的层数
 num_layers = 6
 # 多头注意力中的头数
-num_heads = 8
+num_heads = 8  # 8
 # 字嵌入和位置嵌入的维度
-d_model = 512
+d_model = 512  # 512
 embedding_dim = d_model
 # 全连接
 d_ff = d_model * 4
@@ -62,7 +64,7 @@ modelName = "de2en_5k"
 
 # 模型存储路径
 def modelPath(epoch):
-    return root+'checkpoints/' + modelName + '_%04d' % (epoch) + '.pt'
+    return root + weights_path + modelName + '_%04d' % (epoch) + '.pt'
 
 
 # 打印训练进度
@@ -79,7 +81,7 @@ def writeParametersToFile(n_layers, n_heads, d_model, d_ff, encoder_len, decoder
                '  d_ff:%d' % (d_ff) + \
                '  encoder_len:%d' % (encoder_len) + \
                '  decoder_len:%d' % (decoder_len) + "\n"
-    with open(root+'checkpoints/' + modelName + '.txt', 'a') as f:
+    with open(root + weights_path + modelName + '.txt', 'a') as f:
         f.write('\n')
         f.write(progress)
 
@@ -92,14 +94,14 @@ def writeProgreeToFile(epoch, batch_all, loss, train_accu, valid_accu, lr):
                '  train_accu=' + '{:.6f}'.format(train_accu) + \
                '  valid_accu=' + '{:.6f}'.format(valid_accu) + \
                '  lr=' + '{:.6f}\n'.format(lr)
-    with open(root+'checkpoints/' + modelName + '.txt', 'a') as f:
+    with open(root + weights_path + modelName + '.txt', 'a') as f:
         f.write(progress)
 
 
 # 输出解码结果到文件
 def writeGenerateToFile(content):
     # 解码结果保存文件
-    decode_path = root + 'checkpoints/' + modelName + "_generate_{}.txt".format(decode_method)
+    decode_path = root + weights_path + modelName + "_generate_{}.txt".format(decode_method)
     with open(decode_path, 'a',encoding='utf-8') as f:
         print(content)
         content="{}\n".format(content)

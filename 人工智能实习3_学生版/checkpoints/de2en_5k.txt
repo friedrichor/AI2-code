@@ -1,2 +1,0 @@
-
-n_layers6  n_heads:8  d_model:512  d_ff:2048  encoder_len:258  decoder_len:238

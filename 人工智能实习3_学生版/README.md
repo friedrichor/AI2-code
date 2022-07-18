@@ -22,7 +22,7 @@
 │   └── raw_data #原始的数据集
 ├── model
 │   └── Transformer.py #Transformer模型文件
-├── checkpoints #训练过程和训练结果保存目录
+├── checkpoints-ori #训练过程和训练结果保存目录
 ├── tool
 │   ├── DataTool.py #数据载入工具类
 │   ├── Global.py # Transformer模型参数及 其它参数（本实践的主要参数配置）
@@ -124,7 +124,7 @@ valid accuracy:70.41 % test loss:1.4048
 ### 1.4 查看训练过程
 
 ```sh
-cat checkpoints/de2en_2k.txt
+cat checkpoints-ori/de2en_2k.txt
 
 n_layers3  n_heads:4  d_model:256  d_ff:1024  batch_size:20  encoder_len:363  decoder_len:278
 Epoch:0001  batch:1120  loss=5.996997  train_accu=11.412931  valid_accu=22.383728  lr=0.000098
