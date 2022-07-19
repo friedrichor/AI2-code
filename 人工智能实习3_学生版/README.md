@@ -28,9 +28,9 @@
 │   ├── Global.py # Transformer模型参数及 其它参数（本实践的主要参数配置）
 │   └── TrainTool.py # Warm-up函数
 ├── preprocess  #预处理数据
-├── 测试.py #解码测试
-├── 解码策略.py #解码策略（本实践需要完成的部分）
-└── 训练.py #模型训练
+├── test.py #解码测试
+├── decoding_strategy.py #解码策略（本实践需要完成的部分）
+└── train.py #模型训练
 ```
 
 **待实践部分：**解码策略.py
@@ -67,7 +67,7 @@ python preprocess/S2_ApplyBpe.py
 2. 开始训练
 
    ```sh
-   python 训练.py
+   python train.py
    ```
 
 ### 1.2 载入保存点，继续训练
@@ -91,7 +91,7 @@ python preprocess/S2_ApplyBpe.py
 2. 开始训练
 
    ```sh
-   python 训练.py
+   python train.py
    ```
 
 ### 1.3 训练过程
@@ -174,7 +174,7 @@ Epoch:0020  batch:1120  loss=2.138918  train_accu=68.877916  valid_accu=70.40932
 3. 运行测试
 
    ```sh
-   python 测试.py
+   python test.py
    
    原文：nun , das bringt ihnen keinen doktortitel in harvard , aber es ist viel interessanter als stamina zu zählen . 
    参考译文：now , that &apos;s not going to get you a ph.d. at harvard , but it &apos;s a lot more interesting than counting stamens . 

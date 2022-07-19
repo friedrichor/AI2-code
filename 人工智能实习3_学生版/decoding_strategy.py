@@ -355,7 +355,7 @@ def beamSearch(device,model, enc_vocab2id, dec_id2vocab, dec_vocab2id, source_se
             # [-0.7097622096513343, -2.122625917856267, -2.145524124344232, -3.558387832549165]
             final_scores_punish = []
             for i in range(len(final_result)):
-                final_scores_punish.append(final_scores[i] / math.pow(len(final_result[i]), 0.75))
+                final_scores_punish.append(final_scores[i] / math.pow(len(final_result[i]), 0.4))
             # 进行排序:
             key = []
             for i in range(0, len(final_result)):
@@ -455,7 +455,7 @@ def beamSearch(device,model, enc_vocab2id, dec_id2vocab, dec_vocab2id, source_se
                 final_result[i] = final_result[i][:j] # [1,8,11,5,2,6,7,2,2,8,10]
                 break
     for i in range(len(final_result)):
-        final_scores[i] = final_scores[i] / math.pow(len(final_result[i]), 0.75)
+        final_scores[i] = final_scores[i] / math.pow(len(final_result[i]), 0.4)
         print('len(final_result_pro[i]) = ', len(final_result[i]), end=' ')
 
     mini = max(final_scores)

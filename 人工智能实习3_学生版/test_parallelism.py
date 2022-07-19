@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 from tool.DataTool import *
 from model.Transformer import Transformer
-from 解码策略 import *
+from decoding_strategy import *
 from my_dataset import MyDataSet
 
 warnings.filterwarnings("ignore")
@@ -73,20 +73,14 @@ if __name__ == '__main__':
         enc_pre_1 = enc_pre_1.replace("<e>", " ")
 
         target_sentence = line.split("\t")[1].strip()
-        target_sentence = target_sentence.replace(" ", "")
-        target_sentence = target_sentence.replace("<e>", " ")
-
-        # writeGenerateToFile("原文：{}".format(enc_pre_1))
-        # writeGenerateToFile("参考译文：{}".format(target_sentence))
+        # target_sentence = target_sentence.replace(" ", "")
+        # target_sentence = target_sentence.replace("<e>", " ")
 
         enc_input = char_start + char_space + enc_input + char_space + char_end
         enc_input_list.append(enc_input)
         target_sentence_list.append(target_sentence)
 
-    # print('enc_input_list =', enc_input_list[:5])
-    # print('target_sentence_list =', target_sentence_list[:5])
-
-    test_dataset = MyDataSet(enc_input_list, enc_vocab2id)
+    test_dataset = MyDataSet(enc_input_list, target_sentence_list, enc_vocab2id, dec_vocab2id)
     test_dataloader = DataLoader(test_dataset,
                                  batch_size=batch_size,
                                  shuffle=False,
@@ -96,45 +90,49 @@ if __name__ == '__main__':
                                  drop_last=True)
 
     with torch.no_grad():
-        num = 0
-        for input in test_dataloader:
-            # print(input)
-            # print(target)
-            # exit()
-            if decode_method=="sampling":
+        for input, target in test_dataloader:
+            if decode_method == "sampling":
                 decode_score, decode_result = sampling(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id, input)
-            elif decode_method=="greedy":
-                decode_score, decode_result = greedySearch_parallelization(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id, input)
-            elif decode_method=="topK":
-                decode_score, decode_result = topKSampling_parallelization(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id, input,5)
-            elif decode_method=="topP":
-                decode_score, decode_result = topPSampling_parallelization(device, model, input, batch_size, dec_id2vocab, dec_vocab2id, 0.6)  # 0.8
-            elif decode_method=="beam":
+            elif decode_method == "greedy":
+                decode_score, decode_result = greedySearch_parallelization(device, model, input, batch_size,
+                                                                           dec_id2vocab, dec_vocab2id)
+            elif decode_method == "topK":
+                decode_score, decode_result = topKSampling_parallelization(device, model, input, batch_size,
+                                                                           dec_id2vocab, dec_vocab2id, 5)
+            elif decode_method == "topP":
+                decode_score, decode_result = topPSampling_parallelization(device, model, input, batch_size,
+                                                                           dec_id2vocab, dec_vocab2id, 0.6)  # 0.8
+            elif decode_method == "beam":
                 decode_score, decode_result = beamSearch(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id,
-                                                           input, 5)
+                                                         input, 5)
             else:
                 print("请使用有效的解码策略！")
                 exit()
 
-
             for i in range(batch_size):
                 # 将下标转化成句子
-                src = ''
-                sent = ''
-                for s in input[i]:
-                    if s.item() == 2:
-                        break
-                    src += enc_id2vocab[s.item()] + ' '
+                src = ''  # 原文
+                tar = ''  # 参考译文
+                sent = ''  # 解码结果
+                for w in input[i]:
+                    src += enc_id2vocab[w.item()] + ' '
+                for w in target[i]:
+                    tar += dec_id2vocab[w.item()] + ' '
                 for w in decode_result[i]:
                     if w == 2:  # <end>
                         break
                     sent += dec_id2vocab[w] + ' '
+                # 处理特殊符号
                 src = src.replace(char_space, "")
                 src = src.replace(word_end, " ")
                 src = src.replace(char_start, "")
                 src = src.replace(char_end, "")
 
-                # 处理特俗符号
+                tar = tar.replace(char_space, "")
+                tar = tar.replace(word_end, " ")
+                tar = tar.replace(char_start, "")
+                tar = tar.replace(char_end, "")
+
                 sent = sent.replace(char_space, "")
                 sent = sent.replace(word_end, " ")
                 sent = sent.replace(char_start, "")
@@ -142,19 +140,18 @@ if __name__ == '__main__':
 
                 # 计算该条解码句子的bleu得分
                 print()
-                bleu_score_1 += sentence_bleu([target_sentence_list[num*batch_size+i].split(char_space)], sent.split(char_space),
+                bleu_score_1 += sentence_bleu([tar.split(char_space)], sent.split(char_space),
                                               weights=(1, 0, 0, 0))
-                bleu_score_2 += sentence_bleu([target_sentence_list[num*batch_size+i].split(char_space)], sent.split(char_space),
+                bleu_score_2 += sentence_bleu([tar.split(char_space)], sent.split(char_space),
                                               weights=(0, 1, 0, 0))
-                bleu_score_3 += sentence_bleu([target_sentence_list[num*batch_size+i].split(char_space)], sent.split(char_space),
+                bleu_score_3 += sentence_bleu([tar.split(char_space)], sent.split(char_space),
                                               weights=(0, 0, 1, 0))
-                bleu_score_4 += sentence_bleu([target_sentence_list[num*batch_size+i].split(char_space)], sent.split(char_space),
+                bleu_score_4 += sentence_bleu([tar.split(char_space)], sent.split(char_space),
                                               weights=(0, 0, 0, 1))
 
                 writeGenerateToFile("原文：{}".format(src))
-                writeGenerateToFile("参考译文：{}".format(target_sentence_list[num*batch_size+i]))
+                writeGenerateToFile("参考译文：{}".format(tar))
                 writeGenerateToFile('解码结果：log概率({:.3f})\t{}\n'.format(decode_score[i], sent))
-            num += 1
 
         # 计算所有句子的平均bleu得分
         bleu_score_1 = bleu_score_1 / test_size

@@ -1,17 +1,17 @@
 # *_*coding:utf-8 *_*
 
-# root="/content/drive/MyDrive/trans/" # 项目路径
-root="E:/pythonProjects/course_AIpractice2/人工智能实习3_学生版/" # 项目路径
+# root="/headless/Desktop/人工智能实习3/"  # 项目路径
+# root="/content/drive/MyDrive/trans/"  # 项目路径
+root = "E:/pythonProjects/course_AIpractice2/code-14/"  # 项目路径
 weights_path = "checkpoints-ori/"  # 模型保存路径
-#root="/headless/Desktop/人工智能实习3/" # 项目路径
 
 max_tokens = 8000  # 每个batch所包含的单词数量,根据显卡显存调整(12G:8000,24G:16000)
 epochs = 20  # 训练迭代轮次。
-init_model_number=0 # 0表示从头训练；>=1时，表示载入chekpoint，继续训练
-pre_batch_num_per_epoch=570 # 继续训练时，需配置该参数，570为之前训练时，一个epoch所包含的batch的数量
+init_model_number = 0  # 0表示从头训练；>=1时，表示载入chekpoint，继续训练
+pre_batch_num_per_epoch = 570  # 继续训练时，需配置该参数，570为之前训练时，一个epoch所包含的batch的数量
 
 #解码策略：sampling、beam、greedy、topK、topP
-decode_method="beam"
+decode_method = "greedy"
 
 # 是否使用GPU
 use_gpu = True
@@ -20,9 +20,9 @@ use_gpu = True
 # encoder和decoder的层数
 num_layers = 6
 # 多头注意力中的头数
-num_heads = 8  # 8
+num_heads = 8  # base:8, big:16
 # 字嵌入和位置嵌入的维度
-d_model = 512  # 512
+d_model = 512  # base:512, big:1024
 embedding_dim = d_model
 # 全连接
 d_ff = d_model * 4

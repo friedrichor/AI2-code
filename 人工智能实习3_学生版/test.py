@@ -1,17 +1,21 @@
 # *_*coding:utf-8 *_*
 from nltk.translate.bleu_score import sentence_bleu
 import math
+import time
+
 from tool.DataTool import *
 import torch.nn.functional as F
 from model.Transformer import Transformer
 
 import warnings
 
-from 解码策略 import *
+from decoding_strategy import *
 
 warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
+    time_start = time.time()  # 开始计时
+
     if use_gpu:
         device = torch.device("cuda")
         print("gpu模式")
@@ -28,7 +32,7 @@ if __name__ == '__main__':
 
     enc_vocab2id = {word: i for i, word in enumerate(encoder_chars)}
     enc_id2vocab = {i: word for i, word in enumerate(encoder_chars)}
-    print(enc_id2vocab)
+    # print(enc_id2vocab)
 
     dec_vocab2id = {word: i for i, word in enumerate(decoder_chars)}
     dec_id2vocab = {i: word for i, word in enumerate(decoder_chars)}
@@ -127,3 +131,7 @@ if __name__ == '__main__':
                                                                       bleu_score_4))
 
         writeGenerateToFile("mean bleu：{:.4f}".format((bleu_score_1 + bleu_score_2 + bleu_score_3 + bleu_score_4) / 4))
+
+    time_end = time.time()  # 结束计时
+    time_c = time_end - time_start  # 运行所花时间
+    print('time cost', time_c, 's')

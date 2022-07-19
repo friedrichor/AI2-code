@@ -1,6 +1,8 @@
 # *_*coding:utf-8 *_*
 from nltk.translate.bleu_score import sentence_bleu
 import math
+import time
+
 from tool.DataTool import *
 import torch.nn.functional as F
 from model.Transformer import Transformer
@@ -8,7 +10,7 @@ from multiprocessing import Pool
 import multiprocessing
 import warnings
 from functools import partial
-from 解码策略 import *
+from decoding_strategy import *
 
 warnings.filterwarnings("ignore")
 # multiprocessing.set_start_method('spawn', force=True)
@@ -76,6 +78,8 @@ def single_sentence(device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id, sen
 
 
 if __name__ == '__main__':
+    time_start = time.time()  # 开始计时
+
     if use_gpu:
         device = torch.device("cuda")
         print("gpu模式")
@@ -110,7 +114,7 @@ if __name__ == '__main__':
         test_lines = open(test_file_path, 'r', encoding='utf-8').readlines()
         test_size = len(test_lines)
 
-        pool = Pool(2)
+        pool = Pool(4)
         par_single_sentence = partial(single_sentence, device, model, enc_vocab2id, dec_id2vocab, dec_vocab2id)
         results = pool.map_async(par_single_sentence, test_lines)
         for res in results.get():
@@ -132,3 +136,7 @@ if __name__ == '__main__':
                                                                       avg_bleu_score_4))
 
         writeGenerateToFile("mean bleu：{:.4f}".format((avg_bleu_score_1 + avg_bleu_score_2 + avg_bleu_score_3 + avg_bleu_score_4) / 4))
+
+    time_end = time.time()  # 结束计时
+    time_c = time_end - time_start  # 运行所花时间
+    print('time cost', time_c, 's')
